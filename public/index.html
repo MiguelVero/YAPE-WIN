@@ -6,19 +6,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body { font-family: sans-serif; background: #ccc; margin: 0; display: flex; justify-content: center; padding: 20px; }
-        .card { background: #fff; width: 450px; border: 1px solid #999; padding: 15px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-        .tabs { display: flex; background: #eee; border: 1px solid #999; margin-bottom: 10px; }
-        .tab { flex: 1; padding: 8px; text-align: center; font-size: 11px; cursor: pointer; border-right: 1px solid #999; }
-        .tab.active { background: #000; color: #fff; }
-        .box-area { display: flex; gap: 10px; justify-content: center; margin: 15px 0; }
-        .box { background: #e0e0e0; border: 2px solid #00ff00; border-radius: 5px; width: 120px; text-align: center; padding: 10px; position: relative; }
+        .card { background: #ccc; width: 450px; border: 1px solid #999; padding: 15px; border-radius: 8px; }
+        .box { background: #e0e0e0; border: 2px solid #00ff00; border-radius: 5px; width: 100px; text-align: center; padding: 10px; margin: 10px auto; }
         .val { font-size: 18px; font-weight: bold; }
-        .tag { background: #000; color: #fff; font-size: 9px; padding: 2px; border-radius: 3px; display: block; margin-top: 5px; }
-        .screen { display: none; background: white; min-height: 250px; }
+        .screen { display: none; background: white; padding: 15px; border: 1px solid #999; min-height: 250px; }
         .active { display: block; }
-        .row-p { background: #fff9c4; } 
-        .row-c { background: #c8e6c9; }
-        .status-ok { color: green; font-weight: bold; }
+        /* COLORES DE ESTADO */
+        .row-p { background: #fff9c4; font-weight: bold; } /* Amarillo: Pendiente */
+        .row-c { background: #c8e6c9; color: green; }     /* Verde: Pagado */
+        .row-e { background: #ffcdd2; color: red; }       /* Rojo: Expirado */
         .qr-caja { border: 2px solid #742284; padding: 10px; border-radius: 10px; margin: 10px 0; display: inline-block; }
         .code-yellow { background: #ffcc00; border: 2px dashed #000; font-size: 20px; font-weight: bold; padding: 10px; }
     </style>
@@ -26,60 +22,44 @@
 <body>
 
 <div class="card">
-    <h3><i class="fa-solid fa-wallet"></i> GD Wallet</h3>
-    <div class="tabs">
-        <div id="t1" class="tab active" onclick="nav('s-saldo')">MI SALDO</div>
-        <div id="t2" class="tab" onclick="nav('s-add')">AÑADIR DINERO</div>
-    </div>
-
+    <h3>GD Wallet</h3>
     <div id="s-saldo" class="screen active">
-        <div class="box-area">
-            <div class="box">
-                <span class="val" id="bal">S/.1.00</span>
-                <span class="tag">GD Wallet</span>
-            </div>
+        <div class="box">
+            <span class="val" id="bal">S/.1.00</span>
+            <span style="display:block; font-size:9px; background:#000; color:#fff;">MI SALDO</span>
         </div>
-        <table width="100%" style="font-size:12px; border-collapse: collapse; text-align: left;">
-            <thead>
-                <tr style="border-bottom:2px solid #000;">
-                    <th>VER</th>
-                    <th>CLIENTE</th>
-                    <th>MONTO</th>
-                    <th>ESTADO</th>
-                </tr>
-            </thead>
+        <button onclick="nav('s-add')" style="width:100%; margin-bottom:10px;">+ Añadir Dinero</button>
+        <table width="100%" style="font-size:12px; border-collapse: collapse;">
+            <thead><tr style="border-bottom:1px solid #000;"><th>VER</th><th>CLIENTE</th><th>MONTO</th><th>ESTADO</th></tr></thead>
             <tbody id="lista"></tbody>
         </table>
     </div>
 
     <div id="s-add" class="screen">
-        <p>Monto a recargar: S/. <input type="number" id="m-val" value="1.00" style="width:70px; font-size:16px;"></p>
-        <button onclick="generarQR()" style="width:100%; padding:12px; background:#742284; color:#fff; border:none; border-radius:5px; font-weight:bold; cursor:pointer;">Generar QR de Yape</button>
+        <p>Monto: S/. <input type="number" id="m-val" value="1.00" style="width:60px;"></p>
+        <button onclick="generarQR()" style="width:100%; padding:10px; background:#000; color:#fff;">Generar Yape</button>
     </div>
 
     <div id="s-qr" class="screen" style="text-align:center;">
         <div class="qr-caja">
-            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=YAPE_994728444" width="150">
+            <img src="Captura de pantalla 2026-04-07 115419.png" width="150" alt="QR Yape">
         </div>
         <div class="code-yellow" id="out-code">------</div>
-        <p style="font-size:12px; color: #555;">Pon este código en el mensaje del Yape para validar tu pago.</p>
-        <button onclick="nav('s-saldo')" style="width:100%; padding:10px; background:#333; color:#fff; border:none; margin-top:10px;">Ya yapeé, ver historial</button>
+        <p style="font-size:10px;">Pon este código en el mensaje del Yape.</p>
+        <button onclick="nav('s-saldo')" style="width:100%; padding:10px; background:gray; color:#fff;">Ver Historial</button>
     </div>
 </div>
 
 <script>
     function nav(id) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
         document.getElementById(id).classList.add('active');
-        if(id === 's-saldo') document.getElementById('t1').classList.add('active');
-        else document.getElementById('t2').classList.add('active');
     }
 
     async function generarQR() {
         let m = document.getElementById('m-val').value;
         let n = Math.floor(100000 + Math.random() * 900000);
-        let cod = n + " web";
+        let cod = n + " gdstore";
         document.getElementById('out-code').innerText = cod;
 
         await fetch('/api/nueva-orden', {
@@ -90,28 +70,46 @@
         nav('s-qr');
     }
 
-    async function actualizar() {
-        try {
-            const res = await fetch('/api/usuario');
-            const data = await res.json();
-            document.getElementById('bal').innerText = `S/.${data.saldo.toFixed(2)}`;
-            
-            let html = "";
-            data.historial.forEach(h => {
-                let clase = h.estado === "Pendiente" ? "row-p" : "row-c";
-                let status = h.estado === "Pendiente" ? "⌛ Pendiente" : "<span class='status-ok'>● Completado</span>";
-                html += `<tr class="${clase}" style="border-bottom:1px solid #ddd;">
-                    <td style="padding:8px;"><i class="fa-solid fa-eye" onclick="alert('Código requerido: ${h.codigo}')"></i></td>
-                    <td>${h.usuario}</td>
-                    <td>S/.${h.monto.toFixed(2)}</td>
-                    <td>${status}</td>
-                </tr>`;
-            });
-            document.getElementById('lista').innerHTML = html;
-        } catch(e) {}
+    function formatTime(ms) {
+        if (ms <= 0) return "Expirado";
+        let seg = Math.floor(ms / 1000);
+        let m = Math.floor(seg / 60);
+        let s = seg % 60;
+        return `${m}:${s < 10 ? '0' : ''}${s}`;
     }
 
-    setInterval(actualizar, 3000);
+    async function actualizar() {
+        const res = await fetch('/api/usuario');
+        const data = await res.json();
+        document.getElementById('bal').innerText = `S/.${data.saldo.toFixed(2)}`;
+        
+        let html = "";
+        const ahora = Date.now();
+
+        data.historial.forEach(h => {
+            let restante = h.expira - ahora;
+            let clase = "row-p";
+            let status = `⌛ ${formatTime(restante)}`;
+
+            if (h.estado === "Completado") {
+                clase = "row-c";
+                status = "✅ PAGADO";
+            } else if (restante <= 0) {
+                clase = "row-e";
+                status = "❌ EXPIRADO";
+            }
+
+            html += `<tr class="${clase}">
+                <td><i class="fa-solid fa-eye" onclick="alert('Código: ${h.codigo}')"></i></td>
+                <td>${h.usuario}</td>
+                <td>S/.${h.monto.toFixed(2)}</td>
+                <td>${status}</td>
+            </tr>`;
+        });
+        document.getElementById('lista').innerHTML = html;
+    }
+
+    setInterval(actualizar, 1000);
     actualizar();
 </script>
 </body>
