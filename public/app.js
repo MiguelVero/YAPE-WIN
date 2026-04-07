@@ -1,0 +1,106 @@
+const api = {
+  nuevoPedido: '/api/nueva-orden',
+  estadoUsuario: '/api/usuario',
+  webhookHelp: '/webhook'
+};
+
+function nav(view) {
+  document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+  document.getElementById(view).classList.add('active');
+}
+
+function formatCurrency(value) {
+  return `S/. ${Number(value).toFixed(2)}`;
+}
+
+function formatTime(ms) {
+  if (ms <= 0) return 'Expirado';
+  const totalSeconds = Math.floor(ms / 1000);
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+}
+
+async function fetchUsuario() {
+  const res = await fetch(api.estadoUsuario);
+  if (!res.ok) throw new Error('Error al obtener datos');
+  return res.json();
+}
+
+async function actualizarPantalla() {
+  try {
+    const data = await fetchUsuario();
+    document.getElementById('saldo').textContent = formatCurrency(data.saldo);
+
+    const ahora = Date.now();
+    const filas = data.historial.map(order => {
+      const resta = order.expira - ahora;
+      const estado = order.estado === 'Completado'
+        ? '✅ PAGADO'
+        : resta <= 0
+          ? '❌ EXPIRADO'
+          : `⌛ ${formatTime(resta)}`;
+
+      const clase = order.estado === 'Completado'
+        ? 'row-c'
+        : resta <= 0
+          ? 'row-e'
+          : 'row-p';
+
+      return `
+        <tr class="${clase}">
+          <td><button type="button" class="btn-view" onclick="mostrarCodigo('${order.codigo}')">Ver</button></td>
+          <td>${order.usuario}</td>
+          <td>${formatCurrency(order.monto)}</td>
+          <td>${estado}</td>
+        </tr>
+      `;
+    }).join('');
+
+    document.getElementById('order-list').innerHTML = filas || '<tr><td colspan="4">No hay órdenes</td></tr>';
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+function mostrarCodigo(codigo) {
+  alert(`Código para Yape:\n${codigo}`);
+}
+
+function generarCodigo(length = 6) {
+  return Array.from({ length }, () => Math.floor(Math.random() * 10)).join('');
+}
+
+async function crearOrden() {
+  const montoInput = document.getElementById('monto');
+  const monto = Number(montoInput.value) || 1;
+  const token = generarCodigo();
+  const codigo = `${token} gdstore`;
+
+  const response = await fetch(api.nuevoPedido, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ monto, codigo })
+  });
+
+  const body = await response.json();
+  if (!response.ok) {
+    return alert(body.error || 'No se pudo crear la orden');
+  }
+
+  document.getElementById('qr-text').textContent = codigo;
+  document.getElementById('qr-image').src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(codigo)}`;
+  nav('view-qr');
+}
+
+async function initApp() {
+  document.getElementById('btn-create').addEventListener('click', crearOrden);
+  document.getElementById('btn-home').addEventListener('click', () => nav('view-home'));
+  document.getElementById('btn-back').addEventListener('click', () => nav('view-home'));
+  document.getElementById('btn-howto').addEventListener('click', () => nav('view-help'));
+  document.getElementById('webhook-url').textContent = `${window.location.origin}${api.webhookHelp}`;
+  await actualizarPantalla();
+  setInterval(actualizarPantalla, 2000);
+}
+
+window.addEventListener('DOMContentLoaded', initApp);

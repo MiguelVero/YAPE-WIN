@@ -1,116 +1,66 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>GD Wallet Pro</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        body { font-family: sans-serif; background: #ccc; margin: 0; display: flex; justify-content: center; padding: 20px; }
-        .card { background: #ccc; width: 450px; border: 1px solid #999; padding: 15px; border-radius: 8px; }
-        .box { background: #e0e0e0; border: 2px solid #00ff00; border-radius: 5px; width: 100px; text-align: center; padding: 10px; margin: 10px auto; }
-        .val { font-size: 18px; font-weight: bold; }
-        .screen { display: none; background: white; padding: 15px; border: 1px solid #999; min-height: 250px; }
-        .active { display: block; }
-        /* COLORES DE ESTADO */
-        .row-p { background: #fff9c4; font-weight: bold; } /* Amarillo: Pendiente */
-        .row-c { background: #c8e6c9; color: green; }     /* Verde: Pagado */
-        .row-e { background: #ffcdd2; color: red; }       /* Rojo: Expirado */
-        .qr-caja { border: 2px solid #742284; padding: 10px; border-radius: 10px; margin: 10px 0; display: inline-block; }
-        .code-yellow { background: #ffcc00; border: 2px dashed #000; font-size: 20px; font-weight: bold; padding: 10px; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yape Automático</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <div class="container">
+    <header>
+      <div>
+        <h1>Yape Automático</h1>
+        <p>Genera órdenes, muestra tu saldo y procesa el webhook.</p>
+      </div>
+      <button class="secondary" id="btn-howto">Cómo usar</button>
+    </header>
 
-<div class="card">
-    <h3>GD Wallet</h3>
-    <div id="s-saldo" class="screen active">
-        <div class="box">
-            <span class="val" id="bal">S/.1.00</span>
-            <span style="display:block; font-size:9px; background:#000; color:#fff;">MI SALDO</span>
-        </div>
-        <button onclick="nav('s-add')" style="width:100%; margin-bottom:10px;">+ Añadir Dinero</button>
-        <table width="100%" style="font-size:12px; border-collapse: collapse;">
-            <thead><tr style="border-bottom:1px solid #000;"><th>VER</th><th>CLIENTE</th><th>MONTO</th><th>ESTADO</th></tr></thead>
-            <tbody id="lista"></tbody>
-        </table>
-    </div>
+    <section class="balance-card">
+      <p>Saldo actual</p>
+      <div class="balance-value" id="saldo">S/. 0.00</div>
+    </section>
 
-    <div id="s-add" class="screen">
-        <p>Monto: S/. <input type="number" id="m-val" value="1.00" style="width:60px;"></p>
-        <button onclick="generarQR()" style="width:100%; padding:10px; background:#000; color:#fff;">Generar Yape</button>
-    </div>
+    <section class="controls">
+      <button id="btn-create">Crear orden Yape</button>
+      <button class="secondary" id="btn-home">Ver historial</button>
+    </section>
 
-    <div id="s-qr" class="screen" style="text-align:center;">
-        <div class="qr-caja">
-            <img src="Captura de pantalla 2026-04-07 115419.png" width="150" alt="QR Yape">
-        </div>
-        <div class="code-yellow" id="out-code">------</div>
-        <p style="font-size:10px;">Pon este código en el mensaje del Yape.</p>
-        <button onclick="nav('s-saldo')" style="width:100%; padding:10px; background:gray; color:#fff;">Ver Historial</button>
-    </div>
-</div>
+    <section id="view-home" class="screen active">
+      <table>
+        <thead>
+          <tr>
+            <th>Ver</th>
+            <th>Usuario</th>
+            <th>Monto</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody id="order-list"></tbody>
+      </table>
+    </section>
 
-<script>
-    function nav(id) {
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-    }
+    <section id="view-qr" class="screen">
+      <div class="qr-card">
+        <img id="qr-image" src="" alt="QR Code">
+        <p id="qr-text" style="word-break: break-word;"></p>
+        <button class="secondary" id="btn-back">Volver</button>
+      </div>
+    </section>
 
-    async function generarQR() {
-        let m = document.getElementById('m-val').value;
-        let n = Math.floor(100000 + Math.random() * 900000);
-        let cod = n + " gdstore";
-        document.getElementById('out-code').innerText = cod;
+    <section id="view-help" class="screen">
+      <div class="help-box">
+        <p>Para que el webhook funcione, envía un POST a:</p>
+        <p><strong id="webhook-url"></strong></p>
+        <p>Con JSON:</p>
+        <pre>{ "mensaje": "Pago de Usuario de 123456 gdstore" }</pre>
+        <p>Railway ya detecta la app si subes el repositorio y usa el archivo <code>Procfile</code>.</p>
+        <button class="secondary" id="btn-back">Volver</button>
+      </div>
+    </section>
 
-        await fetch('/api/nueva-orden', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ monto: m, codigo: cod })
-        });
-        nav('s-qr');
-    }
-
-    function formatTime(ms) {
-        if (ms <= 0) return "Expirado";
-        let seg = Math.floor(ms / 1000);
-        let m = Math.floor(seg / 60);
-        let s = seg % 60;
-        return `${m}:${s < 10 ? '0' : ''}${s}`;
-    }
-
-    async function actualizar() {
-        const res = await fetch('/api/usuario');
-        const data = await res.json();
-        document.getElementById('bal').innerText = `S/.${data.saldo.toFixed(2)}`;
-        
-        let html = "";
-        const ahora = Date.now();
-
-        data.historial.forEach(h => {
-            let restante = h.expira - ahora;
-            let clase = "row-p";
-            let status = `⌛ ${formatTime(restante)}`;
-
-            if (h.estado === "Completado") {
-                clase = "row-c";
-                status = "✅ PAGADO";
-            } else if (restante <= 0) {
-                clase = "row-e";
-                status = "❌ EXPIRADO";
-            }
-
-            html += `<tr class="${clase}">
-                <td><i class="fa-solid fa-eye" onclick="alert('Código: ${h.codigo}')"></i></td>
-                <td>${h.usuario}</td>
-                <td>S/.${h.monto.toFixed(2)}</td>
-                <td>${status}</td>
-            </tr>`;
-        });
-        document.getElementById('lista').innerHTML = html;
-    }
-
-    setInterval(actualizar, 1000);
-    actualizar();
-</script>
+    <footer class="footer">La app usa almacenamiento local en <code>data.json</code> y está lista para Railway.</footer>
+  </div>
+  <script src="app.js"></script>
 </body>
 </html>
