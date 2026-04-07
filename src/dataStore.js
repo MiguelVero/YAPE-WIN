@@ -60,9 +60,10 @@ async function addOrder({ monto, codigo }) {
 async function completeOrder(message) {
   const store = await ensureStore();
   const now = Date.now();
+  const text = message.toLowerCase();
   const index = store.historial.findIndex(order =>
     order.estado === 'Pendiente' &&
-    message.includes(order.codigo) &&
+    text.includes(order.codigo.toLowerCase()) &&
     now <= order.expira
   );
 

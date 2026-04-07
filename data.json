@@ -1,4 +1,71 @@
 {
-  "saldo": 1.0,
-  "historial": []
+  "saldo": 12,
+  "historial": [
+    {
+      "id": 1775591667815,
+      "usuario": "Esperando...",
+      "monto": 1,
+      "estado": "Pendiente",
+      "codigo": "530390 gdstore",
+      "creadoEn": 1775591667815,
+      "expira": 1775591967815
+    },
+    {
+      "id": 1775591481689,
+      "usuario": "Usuario Yape",
+      "monto": 3,
+      "estado": "Completado",
+      "codigo": "999111 gdstore",
+      "creadoEn": 1775591481689,
+      "expira": 1775591781689,
+      "pagadoEn": 1775591481703
+    },
+    {
+      "id": 1775591404570,
+      "usuario": "Juan de 555888 gdstore",
+      "monto": 2.5,
+      "estado": "Completado",
+      "codigo": "555888 gdstore",
+      "creadoEn": 1775591404570,
+      "expira": 1775591704570,
+      "pagadoEn": 1775591404585
+    },
+    {
+      "id": 1775590863556,
+      "usuario": "Carlos",
+      "monto": 5.5,
+      "estado": "Completado",
+      "codigo": "987654 gdstore",
+      "creadoEn": 1775590863556,
+      "expira": 1775591163556,
+      "pagadoEn": 1775590863575
+    },
+    {
+      "id": 1775590675226,
+      "usuario": "Esperando...",
+      "monto": 1,
+      "estado": "Pendiente",
+      "codigo": "701908 gdstore",
+      "creadoEn": 1775590675226,
+      "expira": 1775590975226
+    },
+    {
+      "id": 1775590656186,
+      "usuario": "Esperando...",
+      "monto": 1,
+      "estado": "Pendiente",
+      "codigo": "904538 gdstore",
+      "creadoEn": 1775590656186,
+      "expira": 1775590956186
+    },
+    {
+      "id": 1775590582861,
+      "usuario": "Esperando...",
+      "monto": 1.25,
+      "estado": "Pendiente",
+      "codigo": "123456 gdstore",
+      "creadoEn": 1775590582861,
+      "expira": 1775590882861
+    }
+  ]
 }

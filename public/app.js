@@ -1,4 +1,4 @@
-const api = {
+﻿const api = {
   nuevoPedido: '/api/nueva-orden',
   estadoUsuario: '/api/usuario',
   webhookHelp: '/webhook'
@@ -73,7 +73,11 @@ function generarCodigo(length = 6) {
 
 async function crearOrden() {
   const montoInput = document.getElementById('monto');
-  const monto = Number(montoInput.value) || 1;
+  const monto = Number(montoInput.value);
+  if (!monto || monto <= 0) {
+    return alert('Ingresa un monto válido para la orden');
+  }
+
   const token = generarCodigo();
   const codigo = `${token} gdstore`;
 
@@ -89,14 +93,17 @@ async function crearOrden() {
   }
 
   document.getElementById('qr-text').textContent = codigo;
-  document.getElementById('qr-image').src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(codigo)}`;
+  document.getElementById('qr-image').src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(codigo)}`;
   nav('view-qr');
 }
 
 async function initApp() {
-  document.getElementById('btn-create').addEventListener('click', crearOrden);
+  document.getElementById('btn-open-create').addEventListener('click', () => nav('view-create'));
   document.getElementById('btn-home').addEventListener('click', () => nav('view-home'));
-  document.getElementById('btn-back').addEventListener('click', () => nav('view-home'));
+  document.getElementById('btn-generate').addEventListener('click', crearOrden);
+  document.getElementById('btn-back-create').addEventListener('click', () => nav('view-home'));
+  document.getElementById('btn-back-qr').addEventListener('click', () => nav('view-home'));
+  document.getElementById('btn-back-help').addEventListener('click', () => nav('view-home'));
   document.getElementById('btn-howto').addEventListener('click', () => nav('view-help'));
   document.getElementById('webhook-url').textContent = `${window.location.origin}${api.webhookHelp}`;
   await actualizarPantalla();

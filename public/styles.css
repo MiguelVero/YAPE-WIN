@@ -149,11 +149,41 @@ tbody tr {
   margin-bottom: 14px;
 }
 
+.static-qr-card,
+.form-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 18px;
+  margin-bottom: 18px;
+}
+
+.static-qr-card img {
+  width: 100%;
+  max-width: 260px;
+  display: block;
+  margin: 0 auto 12px;
+  border-radius: 18px;
+}
+
+.qr-code-text {
+  margin: 12px 0;
+  word-break: break-word;
+  font-weight: 700;
+}
+
 .help-box {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 18px;
   padding: 18px;
+}
+
+.help-box pre {
+  background: rgba(255, 255, 255, 0.08);
+  padding: 12px;
+  border-radius: 14px;
+  overflow-x: auto;
 }
 
 .help-box p {

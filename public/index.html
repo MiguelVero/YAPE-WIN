@@ -11,9 +11,9 @@
     <header>
       <div>
         <h1>Yape Automático</h1>
-        <p>Genera órdenes, muestra tu saldo y procesa el webhook.</p>
+        <p>Genera órdenes rápidas, muestra tu saldo y recibe el pago con MacroDroid.</p>
       </div>
-      <button class="secondary" id="btn-howto">Cómo usar</button>
+      <button class="secondary" id="btn-howto">Ayuda</button>
     </header>
 
     <section class="balance-card">
@@ -22,11 +22,17 @@
     </section>
 
     <section class="controls">
-      <button id="btn-create">Crear orden Yape</button>
-      <button class="secondary" id="btn-home">Ver historial</button>
+      <button id="btn-open-create">Crear orden</button>
+      <button class="secondary" id="btn-home">Historial</button>
     </section>
 
     <section id="view-home" class="screen active">
+      <div class="static-qr-card">
+        <h2>QR de tu Yape</h2>
+        <img src="yape-static-qr.png" alt="QR de Yape">
+        <p>Los clientes pueden escanear este QR para pagarte directamente.</p>
+      </div>
+
       <table>
         <thead>
           <tr>
@@ -40,26 +46,42 @@
       </table>
     </section>
 
+    <section id="view-create" class="screen">
+      <div class="form-card">
+        <h2>Nueva orden</h2>
+        <label for="monto">Monto S/.</label>
+        <input type="number" id="monto" value="1.00" min="0.50" step="0.10">
+        <button id="btn-generate">Generar orden</button>
+        <button class="secondary" id="btn-back-create">Cancelar</button>
+      </div>
+    </section>
+
     <section id="view-qr" class="screen">
       <div class="qr-card">
+        <h2>Orden creada</h2>
         <img id="qr-image" src="" alt="QR Code">
-        <p id="qr-text" style="word-break: break-word;"></p>
-        <button class="secondary" id="btn-back">Volver</button>
+        <p id="qr-text" class="qr-code-text"></p>
+        <p>Pídele al cliente que escanee este QR y que el mensaje incluya el código de pago.</p>
+        <button class="secondary" id="btn-back-qr">Volver al historial</button>
       </div>
     </section>
 
     <section id="view-help" class="screen">
       <div class="help-box">
-        <p>Para que el webhook funcione, envía un POST a:</p>
+        <h2>Instrucciones MacroDroid</h2>
+        <p>Envía un POST a:</p>
         <p><strong id="webhook-url"></strong></p>
-        <p>Con JSON:</p>
-        <pre>{ "mensaje": "Pago de Usuario de 123456 gdstore" }</pre>
-        <p>Railway ya detecta la app si subes el repositorio y usa el archivo <code>Procfile</code>.</p>
-        <button class="secondary" id="btn-back">Volver</button>
+        <p>Configura MacroDroid para enviar el siguiente JSON:</p>
+        <pre>{
+  "mensaje": "Pago de Usuario de 123456 gdstore"
+}</pre>
+        <p>O usa cualquier campo con el texto del mensaje recibido.</p>
+        <p>La app buscará el código generado y marcará la orden como pagada.</p>
+        <button class="secondary" id="btn-back-help">Volver</button>
       </div>
     </section>
 
-    <footer class="footer">La app usa almacenamiento local en <code>data.json</code> y está lista para Railway.</footer>
+    <footer class="footer">Usa el QR fijo para el pago directo y las órdenes para controlar cobros con MacroDroid.</footer>
   </div>
   <script src="app.js"></script>
 </body>

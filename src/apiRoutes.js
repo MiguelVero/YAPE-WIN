@@ -18,12 +18,12 @@ router.post('/api/nueva-orden', async (req, res) => {
 
 router.post('/webhook', async (req, res) => {
   try {
-    const { mensaje } = req.body;
-    if (!mensaje || typeof mensaje !== 'string') {
+    const message = req.body.mensaje || req.body.message || req.body.msg;
+    if (!message || typeof message !== 'string') {
       return res.status(400).json({ error: 'Mensaje inválido' });
     }
 
-    const order = await completeOrder(mensaje);
+    const order = await completeOrder(message);
     if (!order) {
       return res.status(404).json({ success: false, message: 'Orden no encontrada o ya expirada' });
     }

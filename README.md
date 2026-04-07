@@ -31,7 +31,16 @@ Railway detecta `package.json` y usará `Procfile` si existe.
 
 ## Uso
 
-- Genera una orden con monto y código
-- Copia el código QR o texto
-- Envía el webhook a `/webhook` con `{ "mensaje": "..." }`
+- Abre `http://localhost:3000`
+- Pulsa `Crear orden` y elige el monto
+- Copia el código o usa el QR generado
+- También puedes usar el QR fijo de tu cuenta para pagos directos
+- Configura MacroDroid para enviar un POST a `/webhook`
+- Usa JSON como:
+  ```json
+  {
+    "mensaje": "Pago de Usuario de 123456 gdstore"
+  }
+  ```
+- El servidor acepta `mensaje`, `message` o `msg` como campo de entrada
 
