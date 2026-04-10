@@ -1,0 +1,19 @@
+{
+  "name": "Yape Automático",
+  "short_name": "Yape-Win",
+  "description": "Genera órdenes de pago Yape y recibe notificaciones en tiempo real.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1b1b29",
+  "theme_color": "#492d9c",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/yape-static-qr.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "notifications": true
+}
