@@ -1,6 +1,8 @@
-﻿const express = require('express');
+const express = require('express');
+const http = require('http');
 const path = require('path');
 const apiRoutes = require('./src/apiRoutes');
+const { initWebSocket } = require('./src/notificationService');
 
 const app = express();
 app.use(express.json());
@@ -16,7 +18,10 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Error interno del servidor' });
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+const PORT = process.env.PORT || 8080;
+const server = http.createServer(app);
+initWebSocket(server);
+
+server.listen(PORT, () => {
   console.log(`Servidor iniciado en el puerto ${PORT}`);
 });
