@@ -1,6 +1,5 @@
 const express = require('express');
 const { addOrder, completeOrder, getState } = require('./dataStore');
-const { broadcastPayment } = require('./notificationService');
 
 const router = express.Router();
 
@@ -27,13 +26,6 @@ router.post('/webhook', async (req, res) => {
     const order = await completeOrder(message);
     if (!order) {
       return res.status(404).json({ success: false, message: 'Orden no encontrada o ya expirada' });
-    }
-
-    // Notify all connected WebSocket clients about the completed payment
-    try {
-      broadcastPayment(order);
-    } catch (notifyErr) {
-      console.error('[Webhook] Error al enviar notificación WS:', notifyErr.message);
     }
 
     res.json({ success: true, order });
